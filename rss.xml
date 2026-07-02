@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Abdoul Sarba — Blog QA DevOps</title>
+    <link>https://abdoulsarba.dev/blog.html</link>
+    <description>Articles sur le QA, DevOps et l'automatisation des tests par Abdoul-sacourou Sarba.</description>
+    <language>fr</language>
+    <lastBuildDate>Fri, 15 Nov 2024 08:00:00 +0000</lastBuildDate>
+    <atom:link href="https://abdoulsarba.dev/rss.xml" rel="self" type="application/rss+xml"/>
+    <image>
+      <url>https://abdoulsarba.dev/files/og-image.png</url>
+      <title>Abdoul Sarba — Blog QA DevOps</title>
+      <link>https://abdoulsarba.dev/blog.html</link>
+    </image>
+
+    <item>
+      <title>Introduction à Cypress pour les tests E2E</title>
+      <link>https://abdoulsarba.dev/blog-post-1.html</link>
+      <description><![CDATA[Découvrez comment mettre en place vos premiers tests end-to-end avec Cypress, l'outil moderne qui révolutionne les tests d'interface utilisateur. Setup, premier test, intégration CI.]]></description>
+      <pubDate>Fri, 15 Nov 2024 08:00:00 +0000</pubDate>
+      <guid isPermaLink="true">https://abdoulsarba.dev/blog-post-1.html</guid>
+      <category>QA Automatisation</category>
+    </item>
+
+    <item>
+      <title>CI/CD avec GitHub Actions : Guide complet</title>
+      <link>https://abdoulsarba.dev/blog-post-2.html</link>
+      <description><![CDATA[Du fichier YAML à la mise en production automatisée. Déclencheurs, jobs parallèles, secrets, environnements et déploiements conditionnels.]]></description>
+      <pubDate>Tue, 22 Oct 2024 08:00:00 +0000</pubDate>
+      <guid isPermaLink="true">https://abdoulsarba.dev/blog-post-2.html</guid>
+      <category>DevOps</category>
+    </item>
+
+    <item>
+      <title>Docker pour les testeurs QA</title>
+      <link>https://abdoulsarba.dev/blog.html</link>
+      <description><![CDATA[Comment isoler vos environnements de test avec Docker : exécuter Selenium Grid, reproduire des bugs de production et automatiser vos campagnes de tests.]]></description>
+      <pubDate>Tue, 10 Sep 2024 08:00:00 +0000</pubDate>
+      <guid isPermaLink="false">https://abdoulsarba.dev/blog.html#docker-qa</guid>
+      <category>DevOps</category>
+    </item>
+
+    <item>
+      <title>Meilleures pratiques de tests API REST</title>
+      <link>https://abdoulsarba.dev/blog.html</link>
+      <description><![CDATA[Stratégie complète pour tester vos APIs : validation des contrats, tests de sécurité, performance et intégration dans votre pipeline CI.]]></description>
+      <pubDate>Mon, 05 Aug 2024 08:00:00 +0000</pubDate>
+      <guid isPermaLink="false">https://abdoulsarba.dev/blog.html#api-testing</guid>
+      <category>QA API</category>
+    </item>
+
+    <item>
+      <title>Monitoring avec Prometheus et Grafana</title>
+      <link>https://abdoulsarba.dev/blog.html</link>
+      <description><![CDATA[Mise en place d'un système de monitoring complet : collecte de métriques, dashboards personnalisés et alerting proactif avec AlertManager.]]></description>
+      <pubDate>Sat, 20 Jul 2024 08:00:00 +0000</pubDate>
+      <guid isPermaLink="false">https://abdoulsarba.dev/blog.html#monitoring</guid>
+      <category>DevOps</category>
+    </item>
+
+  </channel>
+</rss>

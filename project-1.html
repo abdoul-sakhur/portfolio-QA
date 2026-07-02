@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Framework Playwright maintenable (DGI) — Abdoul Sarba</title>
+  <script>tailwind.config={theme:{extend:{colors:{'bg-dark':'#020c1b','primary':'#0a192f','accent':'#64ffda','text-main':'#ccd6f6','text-muted':'#8892b0'},fontFamily:{sans:['Inter','sans-serif'],mono:['Fira Code','monospace']}}}}</script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body style="background:#020c1b; color:#ccd6f6;">
+<div id="nav-placeholder"></div>
+<main style="padding-top:4rem;">
+  <div style="max-width:56rem; margin:0 auto; padding:4rem 1.5rem;">
+
+    <!-- Breadcrumb -->
+    <p style="font-family:'Fira Code',monospace; font-size:0.8rem; color:#8892b0; margin-bottom:2rem;">
+      <a href="projects.html" style="color:#64ffda; text-decoration:none;">Projets</a> / Framework Playwright maintenable (DGI)
+    </p>
+
+    <!-- En-tête -->
+    <span style="color:#64ffda; font-size:0.75rem; font-family:'Fira Code',monospace;">QA Automatisation</span>
+    <h1 style="font-size:2rem; font-weight:700; color:#ccd6f6; margin:0.5rem 0 1rem;">Concevoir un framework Playwright maintenable : architecture, CI/CD et intégration Jira</h1>
+
+    <div style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:2rem;">
+      <span class="tech-badge">Playwright</span><span class="tech-badge">TypeScript</span><span class="tech-badge">Jenkins</span>
+      <span class="tech-badge">Jira</span><span class="tech-badge">Allure</span>
+    </div>
+
+    <div style="display:flex; gap:1rem; margin-bottom:2.5rem;">
+      <a href="https://gitlab.com/sarbaabdoulsacourou/playwright-fne/-/blob/main/pw/playwright/PROCESSUS_EXECUTION.txt?ref_type=heads" target="_blank" rel="noopener" class="btn-outline" style="padding:0.5rem 1rem; font-size:0.875rem;">Voir sur GitLab →</a>
+    </div>
+
+    <!-- Image principale -->
+    <img src="files/projets/projet-1.png" alt="Framework Playwright maintenable" style="width:100%; border-radius:0.75rem; margin-bottom:3rem; border:1px solid rgba(100,255,218,0.1);">
+
+    <!-- Métriques -->
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px,1fr)); gap:1rem; margin-bottom:3rem;">
+      <div class="card" style="text-align:center;">
+        <p style="font-size:1.75rem; font-weight:700; color:#64ffda; font-family:'Fira Code',monospace;">POM</p>
+        <p style="color:#8892b0; font-size:0.8rem; margin-top:0.25rem;">Architecture Page Object Model</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <p style="font-size:1.75rem; font-weight:700; color:#64ffda; font-family:'Fira Code',monospace;">4</p>
+        <p style="color:#8892b0; font-size:0.8rem; margin-top:0.25rem;">Modes d'exécution des tests</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <p style="font-size:1.75rem; font-weight:700; color:#64ffda; font-family:'Fira Code',monospace;">Allure</p>
+        <p style="color:#8892b0; font-size:0.8rem; margin-top:0.25rem;">Rapports générés automatiquement</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <p style="font-size:1.75rem; font-weight:700; color:#64ffda; font-family:'Fira Code',monospace;">Jira</p>
+        <p style="color:#8892b0; font-size:0.8rem; margin-top:0.25rem;">Tickets créés automatiquement</p>
+      </div>
+    </div>
+
+    <!-- Contenu -->
+    <div class="blog-content">
+      <p>Écrire quelques tests avec Playwright est relativement simple. Concevoir un framework capable d'évoluer avec une application métier est une toute autre histoire.</p>
+      <p>Dans le cadre d'un projet de tests automatisés pour une application de la Direction Générale des Impôts (DGI), l'objectif n'était pas uniquement d'automatiser des scénarios, mais de construire une base solide permettant aux équipes QA et développement de travailler efficacement sur le long terme.</p>
+
+      <h2>Une architecture pensée pour évoluer</h2>
+      <p>L'une des premières décisions a été d'adopter le <strong>Page Object Model (POM)</strong>. Ce pattern permet d'isoler les interactions avec l'interface utilisateur dans des classes dédiées.</p>
+      <p>L'organisation du projet est volontairement simple.</p>
+      <pre><code>playwright/
+│
+├── pages/
+│   ├── connexion.page.ts
+│   ├── inscription.page.ts
+│   └── sideMenu.page.ts
+│
+├── specs/
+│   ├── connexion.spec.ts
+│   ├── inscription.spec.ts
+│   └── dossier-creation.spec.ts
+│
+├── utils/
+├── conf/
+├── scripts/
+└── playwright.config.ts</code></pre>
+      <p>Grâce à cette séparation, une modification de l'interface n'impacte généralement que les objets de page, sans nécessiter une réécriture complète des scénarios.</p>
+
+      <h2>Encapsuler les actions dans les Page Objects</h2>
+      <p>Plutôt que de manipuler directement les sélecteurs dans les tests, toutes les actions sont regroupées dans des classes.</p>
+      <pre><code>export class ConnexionPage {
+
+    constructor(private page: Page) {}
+
+    async seConnecter(email: string, password: string) {
+
+        await this.page.fill('#email', email);
+        await this.page.fill('#password', password);
+        await this.page.click('button[type="submit"]');
+
+    }
+
+}</code></pre>
+      <p>Le scénario devient alors beaucoup plus lisible.</p>
+      <pre><code>test("Connexion utilisateur", async ({ page }) => {
+
+    const connexion = new ConnexionPage(page);
+
+    await connexion.seConnecter(email, password);
+
+});</code></pre>
+      <p>Le test décrit le comportement attendu tandis que la logique technique reste centralisée dans les Page Objects.</p>
+
+      <h2>Centraliser les configurations</h2>
+      <p>Les identifiants et les URLs ne sont jamais codés directement dans les scénarios.</p>
+      <pre><code>conf/
+│
+├── credentials.conf.json
+├── credentials.ts
+└── environement/
+    └── lien.conf.json</code></pre>
+      <p>Les variables d'environnement sont ensuite chargées automatiquement.</p>
+      <pre><code>APP=DGI
+ENV=staging
+
+JIRA_HOST=xxxxx.atlassian.net
+PROJECT_KEY=SCRUM</code></pre>
+      <p>Cette approche permet de changer facilement d'environnement sans modifier le code.</p>
+
+      <h2>Exécuter les tests simplement</h2>
+      <p>Le framework propose plusieurs modes d'exécution.</p>
+      <p>Lancer toute la suite :</p>
+      <pre><code>npm run test</code></pre>
+      <p>Lancer uniquement les tests Smoke :</p>
+      <pre><code>npm run test:smoke</code></pre>
+      <p>Exécuter un scénario précis :</p>
+      <pre><code>bash scripts/playwright_launch_test.bash \
+DGI/connexion.spec.ts</code></pre>
+      <p>Ou encore filtrer un test particulier :</p>
+      <pre><code>npx playwright test \
+--grep "Connexion utilisateur"</code></pre>
+      <p>Cette flexibilité facilite les validations rapides pendant le développement.</p>
+
+      <h2>Générer automatiquement les rapports Allure</h2>
+      <p>Chaque campagne de tests produit un rapport Allure contenant :</p>
+      <ul>
+        <li>les captures d'écran ;</li>
+        <li>les traces Playwright ;</li>
+        <li>les statistiques d'exécution ;</li>
+        <li>les scénarios réussis et échoués.</li>
+      </ul>
+      <p>La génération du rapport reste très simple.</p>
+      <pre><code>npm run allure:report</code></pre>
+      <p>Disposer immédiatement d'un historique des exécutions accélère considérablement l'analyse des campagnes de tests.</p>
+
+      <h2>Intégrer le framework dans Jenkins</h2>
+      <p>L'automatisation prend tout son sens lorsqu'elle est exécutée dans une chaîne CI/CD.</p>
+      <p>Voici un exemple simplifié de pipeline.</p>
+      <pre><code>pipeline {
+
+    agent any
+
+    stages {
+
+        stage('Install') {
+
+            steps {
+                sh 'npm install'
+            }
+
+        }
+
+        stage('Tests') {
+
+            steps {
+                sh 'npm test'
+            }
+
+        }
+
+    }
+
+}</code></pre>
+      <p>Les campagnes peuvent ainsi être exécutées automatiquement à chaque commit ou avant chaque livraison.</p>
+
+      <h2>Sécuriser les secrets Jenkins</h2>
+      <p>Une erreur fréquente consiste à stocker les tokens directement dans le dépôt Git.</p>
+      <p>La bonne pratique consiste à utiliser le <strong>Credentials Store</strong> de Jenkins.</p>
+      <pre><code>environment {
+
+    JIRA_EMAIL = credentials('jira-email')
+
+    JIRA_API_TOKEN = credentials('jira-api-token')
+
+}</code></pre>
+      <p>Les secrets restent invisibles dans les logs et ne transitent jamais dans le code source.</p>
+
+      <h2>Créer automatiquement les tickets Jira</h2>
+      <p>Le framework est capable de créer un ticket Jira lorsqu'un scénario échoue.</p>
+      <p>Avant toute création, une requête JQL est exécutée afin de vérifier si un ticket similaire existe déjà.</p>
+      <pre><code>project = "SCRUM"
+
+AND summary ~ "Connexion utilisateur"
+
+AND status NOT IN (Done, Closed)
+
+AND labels = automation</code></pre>
+      <p>Si un ticket est déjà ouvert, aucune nouvelle anomalie n'est créée.</p>
+      <p>Cette stratégie réduit considérablement les doublons dans les projets où plusieurs pipelines exécutent les mêmes campagnes de tests.</p>
+
+      <h2>Le flux d'exécution</h2>
+      <p>Une campagne suit toujours le même cycle.</p>
+      <pre><code>Playwright
+        │
+        ▼
+Chargement de la configuration
+        │
+        ▼
+Initialisation du navigateur
+        │
+        ▼
+Exécution des hooks
+        │
+        ▼
+Page Objects
+        │
+        ▼
+Assertions
+        │
+        ▼
+Rapport Allure
+        │
+        ▼
+Création automatique du ticket Jira</code></pre>
+      <p>Cette chaîne garantit une exécution reproductible aussi bien en local que sur Jenkins.</p>
+
+      <h2>Conclusion</h2>
+      <p>Un framework Playwright ne doit pas seulement exécuter des tests. Il doit être capable d'accompagner l'évolution d'une application pendant plusieurs années.</p>
+      <p>L'utilisation du <strong>Page Object Model</strong>, d'une architecture modulaire, de rapports Allure, d'une intégration Jenkins et d'une création intelligente des tickets Jira permet de transformer une simple suite de tests en une véritable plateforme d'assurance qualité.</p>
+      <p>Au final, l'objectif n'est pas d'avoir le plus grand nombre de scénarios automatisés, mais de disposer d'un framework fiable, lisible et suffisamment robuste pour évoluer au même rythme que l'application qu'il valide.</p>
+    </div>
+
+    <div style="margin-top:3rem; padding-top:2rem; border-top:1px solid rgba(31,41,55,0.8); display:flex; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
+      <a href="projects.html" class="btn-outline" style="padding:0.5rem 1rem; font-size:0.875rem;">← Retour aux projets</a>
+      <a href="project-2.html" class="btn-outline" style="padding:0.5rem 1rem; font-size:0.875rem;">Projet suivant →</a>
+    </div>
+  </div>
+</main>
+<div id="footer-placeholder"></div>
+<script src="js/script.js"></script>
+</body>
+</html>

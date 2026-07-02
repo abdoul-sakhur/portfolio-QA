@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Framework Tests E2E Cypress — Abdoul Sarba</title>
+  <script>tailwind.config={theme:{extend:{colors:{'bg-dark':'#020c1b','primary':'#0a192f','accent':'#64ffda','text-main':'#ccd6f6','text-muted':'#8892b0'},fontFamily:{sans:['Inter','sans-serif'],mono:['Fira Code','monospace']}}}}</script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body style="background:#020c1b; color:#ccd6f6;">
+<div id="nav-placeholder"></div>
+<main style="padding-top:4rem;">
+  <div style="max-width:56rem; margin:0 auto; padding:4rem 1.5rem;">
+
+    <p style="font-family:'Fira Code',monospace; font-size:0.8rem; color:#8892b0; margin-bottom:2rem;">
+      <a href="projects.html" style="color:#64ffda; text-decoration:none;">Projets</a> / Framework Tests E2E Cypress
+    </p>
+
+    <span style="color:#64ffda; font-size:0.75rem; font-family:'Fira Code',monospace;">QA Automatisation</span>
+    <h1 style="font-size:2rem; font-weight:700; color:#ccd6f6; margin:0.5rem 0 1rem;">Framework Tests E2E Cypress</h1>
+
+    <div style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:2rem;">
+      <span class="tech-badge">Cypress</span><span class="tech-badge">JavaScript</span><span class="tech-badge">GitHub Actions</span>
+      <span class="tech-badge">Mocha</span><span class="tech-badge">Mochawesome</span><span class="tech-badge">Faker.js</span>
+    </div>
+
+    <div style="display:flex; gap:1rem; margin-bottom:2.5rem;">
+      <a href="#" target="_blank" class="btn-outline" style="padding:0.5rem 1rem; font-size:0.875rem;">GitHub →</a>
+    </div>
+
+    <img src="files/projets/projet-2.png" alt="Framework Cypress" style="width:100%; border-radius:0.75rem; margin-bottom:3rem; border:1px solid rgba(100,255,218,0.1);">
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px,1fr)); gap:1rem; margin-bottom:3rem;">
+      <div class="card" style="text-align:center;">
+        <p style="font-size:1.75rem; font-weight:700; color:#64ffda; font-family:'Fira Code',monospace;">300+</p>
+        <p style="color:#8892b0; font-size:0.8rem; margin-top:0.25rem;">Cas de test</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <p style="font-size:1.75rem; font-weight:700; color:#64ffda; font-family:'Fira Code',monospace;">95%</p>
+        <p style="color:#8892b0; font-size:0.8rem; margin-top:0.25rem;">Taux de réussite</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <p style="font-size:1.75rem; font-weight:700; color:#64ffda; font-family:'Fira Code',monospace;">12min</p>
+        <p style="color:#8892b0; font-size:0.8rem; margin-top:0.25rem;">Durée d'exécution</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <p style="font-size:1.75rem; font-weight:700; color:#64ffda; font-family:'Fira Code',monospace;">85%</p>
+        <p style="color:#8892b0; font-size:0.8rem; margin-top:0.25rem;">Couverture fonctionnelle</p>
+      </div>
+    </div>
+
+    <div class="blog-content">
+      <h2>Contexte</h2>
+      <p>Un acteur e-commerce en croissance avait besoin de sécuriser son tunnel d'achat face aux nouvelles livraisons de fonctionnalités hebdomadaires. Les tests manuels de régression prenaient 2 jours pour 2 testeurs. L'objectif : automatiser 85% des scénarios critiques en moins de 15 minutes d'exécution.</p>
+
+      <h2>Architecture du framework</h2>
+      <p>Le framework repose sur le pattern Page Object Model (POM) avec Cypress 12 :</p>
+      <ul>
+        <li><strong>cypress/pages/</strong> — abstractions des pages (HomePage, ProductPage, CartPage, CheckoutPage)</li>
+        <li><strong>cypress/fixtures/</strong> — données de test (produits, utilisateurs, adresses)</li>
+        <li><strong>cypress/support/</strong> — commandes custom (login, addToCart, checkout)</li>
+        <li><strong>cypress/e2e/</strong> — specs organisées par feature (catalogue, panier, paiement, compte)</li>
+      </ul>
+
+      <h2>Exemple de test</h2>
+      <pre><code>// cypress/e2e/checkout/full-purchase.cy.js
+import { CartPage } from '../../pages/CartPage'
+import { CheckoutPage } from '../../pages/CheckoutPage'
+import products from '../../fixtures/products.json'
+
+describe('Tunnel d\'achat complet', () => {
+  beforeEach(() => {
+    cy.login('test@example.com', 'password123')
+  })
+
+  it('doit permettre d\'acheter un produit', () => {
+    cy.visit('/products')
+    cy.addToCart(products.laptop.id)
+
+    const cart = new CartPage()
+    cart.open()
+    cart.assertItemCount(1)
+    cart.assertTotal(products.laptop.price)
+    cart.proceedToCheckout()
+
+    const checkout = new CheckoutPage()
+    checkout.fillShipping(Cypress.env('TEST_ADDRESS'))
+    checkout.selectPayment('card')
+    checkout.fillCard('4111 1111 1111 1111', '12/26', '123')
+    checkout.submit()
+
+    cy.url().should('include', '/order-confirmation')
+    cy.contains('Commande confirmée').should('be.visible')
+  })
+})</code></pre>
+
+      <h2>Intégration CI/CD</h2>
+      <p>Le workflow GitHub Actions exécute les tests en parallèle sur 4 containers Cypress :</p>
+      <pre><code>name: E2E Tests
+on: [push, pull_request]
+jobs:
+  cypress-run:
+    strategy:
+      matrix:
+        containers: [1, 2, 3, 4]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: cypress-io/github-action@v6
+        with:
+          record: true
+          parallel: true
+          group: 'E2E Tests'
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}</code></pre>
+
+      <h2>Résultats</h2>
+      <ul>
+        <li>Détection de 12 régressions critiques en 3 mois (non détectées manuellement)</li>
+        <li>Durée des tests de régression réduite de 2 jours à 12 minutes</li>
+        <li>Rapport HTML Mochawesome envoyé par email à chaque sprint</li>
+      </ul>
+    </div>
+
+    <div style="margin-top:3rem; padding-top:2rem; border-top:1px solid rgba(31,41,55,0.8); display:flex; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
+      <a href="project-1.html" class="btn-outline" style="padding:0.5rem 1rem; font-size:0.875rem;">← Projet précédent</a>
+      <a href="project-3.html" class="btn-outline" style="padding:0.5rem 1rem; font-size:0.875rem;">Projet suivant →</a>
+    </div>
+  </div>
+</main>
+<div id="footer-placeholder"></div>
+<script src="js/script.js"></script>
+</body>
+</html>

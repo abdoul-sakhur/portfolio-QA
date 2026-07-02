@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CI/CD avec GitHub Actions — Abdoul Sarba</title>
+  <script>tailwind.config={theme:{extend:{colors:{'bg-dark':'#020c1b','primary':'#0a192f','accent':'#64ffda','text-main':'#ccd6f6','text-muted':'#8892b0'},fontFamily:{sans:['Inter','sans-serif'],mono:['Fira Code','monospace']}}}}</script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body style="background:#020c1b; color:#ccd6f6;">
+<div id="nav-placeholder"></div>
+<main style="padding-top:4rem;">
+  <div style="max-width:48rem; margin:0 auto; padding:4rem 1.5rem;">
+
+    <p style="font-family:'Fira Code',monospace; font-size:0.8rem; color:#8892b0; margin-bottom:2rem;">
+      <a href="blog.html" style="color:#64ffda; text-decoration:none;">Blog</a> / GitHub Actions CI/CD
+    </p>
+
+    <span style="color:#64ffda; font-size:0.75rem; font-family:'Fira Code',monospace;">DevOps</span>
+    <h1 style="font-size:2rem; font-weight:700; color:#ccd6f6; margin:0.5rem 0 1rem; line-height:1.2;">CI/CD avec GitHub Actions : Guide complet</h1>
+
+    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:2rem; flex-wrap:wrap;">
+      <span style="font-size:0.8rem; color:#8892b0; font-family:'Fira Code',monospace;">22 octobre 2024</span>
+      <span style="color:#8892b0;">·</span>
+      <span style="font-size:0.8rem; color:#8892b0; font-family:'Fira Code',monospace;">12 min de lecture</span>
+    </div>
+
+    <img src="files/images_blog/github-actions.png" alt="GitHub Actions CI/CD" style="width:100%; border-radius:0.75rem; margin-bottom:3rem; border:1px solid rgba(100,255,218,0.1);">
+
+    <div class="blog-content">
+
+      <p>GitHub Actions est un outil de CI/CD intégré directement dans GitHub, qui permet d'automatiser vos workflows de test et de déploiement sans configuration d'infrastructure tierce. Dans ce guide, nous allons construire un pipeline complet.</p>
+
+      <h2>Concepts fondamentaux</h2>
+      <p>Avant de commencer, clarifions les concepts clés :</p>
+      <ul>
+        <li><strong>Workflow</strong> : un processus automatisé défini dans un fichier YAML sous <code>.github/workflows/</code></li>
+        <li><strong>Job</strong> : un ensemble d'étapes qui s'exécutent sur le même runner</li>
+        <li><strong>Step</strong> : une tâche individuelle au sein d'un job (commande shell ou action)</li>
+        <li><strong>Action</strong> : une tâche réutilisable publiée sur le GitHub Marketplace</li>
+        <li><strong>Runner</strong> : la machine virtuelle qui exécute le job</li>
+      </ul>
+
+      <h2>Structure d'un workflow</h2>
+      <pre><code># .github/workflows/ci.yml
+name: Pipeline CI/CD          # Nom affiché dans l'interface
+
+on:                           # Déclencheurs
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+env:                          # Variables d'environnement globales
+  NODE_VERSION: '20'
+
+jobs:
+  test:                       # Premier job : tests
+    name: Tests unitaires
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      - run: npm ci
+      - run: npm test
+
+  build:                      # Second job : build (dépend de test)
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci && npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/</code></pre>
+
+      <h2>Jobs parallèles et matrice</h2>
+      <p>La stratégie <code>matrix</code> permet d'exécuter le même job sur plusieurs configurations en parallèle :</p>
+      <pre><code>jobs:
+  test-matrix:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: [18, 20, 22]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm ci && npm test</code></pre>
+
+      <h2>Gestion des secrets</h2>
+      <p>Les informations sensibles (clés API, tokens) ne doivent jamais être en dur dans le code. Utilisez les secrets GitHub :</p>
+      <ol>
+        <li>Allez dans <strong>Settings → Secrets and variables → Actions</strong></li>
+        <li>Cliquez sur <strong>New repository secret</strong></li>
+        <li>Référencez-les dans votre workflow avec <code>${{ secrets.NOM_DU_SECRET }}</code></li>
+      </ol>
+      <pre><code>- name: Deploy to AWS
+  env:
+    AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  run: aws s3 sync ./dist s3://mon-bucket</code></pre>
+
+      <h2>Déploiement avec environnements</h2>
+      <p>Configurez des environnements avec des validations manuelles pour les déploiements sensibles :</p>
+      <pre><code>jobs:
+  deploy-prod:
+    needs: [test, build]
+    runs-on: ubuntu-latest
+    environment:
+      name: production         # Environnement avec approbation requise
+      url: https://myapp.com
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+      - name: Deploy
+        run: ./scripts/deploy.sh production</code></pre>
+
+      <blockquote>
+        💡 Astuce : utilisez <code>concurrency</code> pour annuler automatiquement les workflows en cours lors d'un nouveau push sur la même branche, évitant ainsi les déploiements superposés.
+      </blockquote>
+      <pre><code>concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true</code></pre>
+
+      <h2>Optimisation du cache</h2>
+      <p>La mise en cache des dépendances réduit drastiquement le temps d'exécution :</p>
+      <pre><code>- uses: actions/cache@v4
+  with:
+    path: ~/.npm
+    key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+    restore-keys: ${{ runner.os }}-node-</code></pre>
+
+      <h2>Conclusion</h2>
+      <p>GitHub Actions offre une flexibilité remarquable pour construire des pipelines CI/CD robustes. La clé est de commencer simple (lint → test → build) et d'ajouter progressivement : déploiements multi-environnements, notifications, sécurité (SAST/DAST), et reporting de couverture.</p>
+
+    </div>
+
+    <div style="margin-top:2.5rem; padding-top:1.5rem; border-top:1px solid rgba(31,41,55,0.8);">
+      <p style="color:#8892b0; font-size:0.8rem; font-family:'Fira Code',monospace; margin-bottom:0.75rem;">// tags</p>
+      <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
+        <span class="tech-badge">GitHub Actions</span><span class="tech-badge">CI/CD</span><span class="tech-badge">DevOps</span>
+        <span class="tech-badge">YAML</span><span class="tech-badge">Automation</span>
+      </div>
+    </div>
+
+    <div style="margin-top:2.5rem; display:flex; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
+      <a href="blog-post-1.html" class="btn-outline" style="padding:0.5rem 1rem; font-size:0.875rem;">← Article précédent</a>
+      <a href="blog.html" class="btn-outline" style="padding:0.5rem 1rem; font-size:0.875rem;">Tous les articles</a>
+    </div>
+  </div>
+</main>
+<div id="footer-placeholder"></div>
+<script src="js/script.js"></script>
+</body>
+</html>

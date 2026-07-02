@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog — Abdoul Sarba</title>
+  <script>tailwind.config={theme:{extend:{colors:{'bg-dark':'#020c1b','primary':'#0a192f','accent':'#64ffda','text-main':'#ccd6f6','text-muted':'#8892b0'},fontFamily:{sans:['Inter','sans-serif'],mono:['Fira Code','monospace']}}}}</script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body style="background:#020c1b; color:#ccd6f6;">
+<div id="nav-placeholder"></div>
+<main style="padding-top:4rem;">
+  <div style="max-width:72rem; margin:0 auto; padding:4rem 1.5rem;">
+
+    <div style="margin-bottom:3rem;">
+      <p style="color:#64ffda; font-family:'Fira Code',monospace; font-size:0.875rem; margin-bottom:0.5rem;">// blog</p>
+      <h1 class="section-title" style="font-size:2.25rem; font-weight:700; color:#ccd6f6;">Articles</h1>
+      <p style="color:#8892b0; margin-top:1rem;">Partage d'expériences sur le QA, DevOps et l'automatisation</p>
+    </div>
+
+    <!-- Article vedette -->
+    <div class="card card-hover" style="display:flex; flex-wrap:wrap; gap:2rem; margin-bottom:3rem; border:1px solid rgba(100,255,218,0.15);">
+      <img src="files/images_blog/introduction-cypress.png" alt="Cypress E2E" loading="lazy" style="width:100%; max-width:360px; height:220px; object-fit:cover; border-radius:8px; flex-shrink:0;">
+      <div style="flex:1; min-width:240px; display:flex; flex-direction:column; justify-content:center;">
+        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
+          <span style="color:#64ffda; font-size:0.75rem; font-family:'Fira Code',monospace;">QA Automatisation</span>
+          <span style="color:#8892b0; font-size:0.75rem; background:rgba(100,255,218,0.1); padding:0.15rem 0.5rem; border-radius:9999px; font-family:'Fira Code',monospace;">Vedette</span>
+        </div>
+        <h2 style="font-size:1.375rem; font-weight:700; color:#ccd6f6; margin-bottom:0.75rem;">Introduction à Cypress pour les tests E2E</h2>
+        <p style="color:#8892b0; font-size:0.875rem; margin-bottom:1.25rem; line-height:1.7;">Découvrez comment mettre en place vos premiers tests end-to-end avec Cypress, l'outil moderne qui révolutionne les tests d'interface utilisateur. Setup, premier test, intégration CI.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:0.8rem; color:#8892b0; font-family:'Fira Code',monospace;">15 novembre 2024 · 8 min</span>
+          <a href="blog-post-1.html" class="btn-primary" style="padding:0.4rem 1rem; font-size:0.8rem;">Lire l'article</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Liste articles -->
+    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:1.5rem;">
+
+      <div class="card card-hover" style="display:flex; flex-direction:column;">
+        <img src="files/images_blog/github-actions.png" alt="GitHub Actions" loading="lazy" style="width:100%; height:180px; object-fit:cover; border-radius:6px; margin-bottom:1rem;">
+        <span style="color:#64ffda; font-size:0.75rem; font-family:'Fira Code',monospace; margin-bottom:0.5rem;">DevOps</span>
+        <h3 style="font-size:1.125rem; font-weight:700; color:#ccd6f6; margin-bottom:0.5rem;">CI/CD avec GitHub Actions : Guide complet</h3>
+        <p style="color:#8892b0; font-size:0.875rem; flex:1; margin-bottom:1rem;">Du fichier YAML à la mise en production automatisée. Déclencheurs, jobs parallèles, secrets, environnements et déploiements conditionnels.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:0.75rem; color:#8892b0; font-family:'Fira Code',monospace;">22 oct. 2024 · 12 min</span>
+          <a href="blog-post-2.html" style="color:#64ffda; font-size:0.875rem; text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Lire →</a>
+        </div>
+      </div>
+
+      <div class="card card-hover" style="display:flex; flex-direction:column;">
+        <img src="https://picsum.photos/seed/blog3/800/400" alt="Docker QA" loading="lazy" style="width:100%; height:180px; object-fit:cover; border-radius:6px; margin-bottom:1rem;">
+        <span style="color:#64ffda; font-size:0.75rem; font-family:'Fira Code',monospace; margin-bottom:0.5rem;">DevOps</span>
+        <h3 style="font-size:1.125rem; font-weight:700; color:#ccd6f6; margin-bottom:0.5rem;">Docker pour les testeurs QA</h3>
+        <p style="color:#8892b0; font-size:0.875rem; flex:1; margin-bottom:1rem;">Comment isoler vos environnements de test avec Docker : exécuter Selenium Grid, reproduire des bugs de production et automatiser vos campagnes.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:0.75rem; color:#8892b0; font-family:'Fira Code',monospace;">10 sept. 2024 · 10 min</span>
+          <span style="color:#8892b0; font-size:0.875rem;">Bientôt →</span>
+        </div>
+      </div>
+
+      <div class="card card-hover" style="display:flex; flex-direction:column;">
+        <img src="https://picsum.photos/seed/blog4/800/400" alt="Tests API" loading="lazy" style="width:100%; height:180px; object-fit:cover; border-radius:6px; margin-bottom:1rem;">
+        <span style="color:#64ffda; font-size:0.75rem; font-family:'Fira Code',monospace; margin-bottom:0.5rem;">QA API</span>
+        <h3 style="font-size:1.125rem; font-weight:700; color:#ccd6f6; margin-bottom:0.5rem;">Meilleures pratiques de tests API REST</h3>
+        <p style="color:#8892b0; font-size:0.875rem; flex:1; margin-bottom:1rem;">Stratégie complète pour tester vos APIs : validation des contrats, tests de sécurité, performance et intégration dans votre pipeline CI.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:0.75rem; color:#8892b0; font-family:'Fira Code',monospace;">5 août 2024 · 9 min</span>
+          <span style="color:#8892b0; font-size:0.875rem;">Bientôt →</span>
+        </div>
+      </div>
+
+      <div class="card card-hover" style="display:flex; flex-direction:column;">
+        <img src="https://picsum.photos/seed/blog5/800/400" alt="Prometheus Grafana" loading="lazy" style="width:100%; height:180px; object-fit:cover; border-radius:6px; margin-bottom:1rem;">
+        <span style="color:#64ffda; font-size:0.75rem; font-family:'Fira Code',monospace; margin-bottom:0.5rem;">DevOps</span>
+        <h3 style="font-size:1.125rem; font-weight:700; color:#ccd6f6; margin-bottom:0.5rem;">Monitoring avec Prometheus et Grafana</h3>
+        <p style="color:#8892b0; font-size:0.875rem; flex:1; margin-bottom:1rem;">Mise en place d'un système de monitoring complet : collecte de métriques, dashboards personnalisés et alerting proactif.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:0.75rem; color:#8892b0; font-family:'Fira Code',monospace;">20 juil. 2024 · 11 min</span>
+          <span style="color:#8892b0; font-size:0.875rem;">Bientôt →</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+<div id="footer-placeholder"></div>
+<script src="js/script.js"></script>
+</body>
+</html>

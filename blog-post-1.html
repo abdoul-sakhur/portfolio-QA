@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Introduction à Cypress pour les tests E2E — Abdoul Sarba</title>
+  <script>tailwind.config={theme:{extend:{colors:{'bg-dark':'#020c1b','primary':'#0a192f','accent':'#64ffda','text-main':'#ccd6f6','text-muted':'#8892b0'},fontFamily:{sans:['Inter','sans-serif'],mono:['Fira Code','monospace']}}}}</script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body style="background:#020c1b; color:#ccd6f6;">
+<div id="nav-placeholder"></div>
+<main style="padding-top:4rem;">
+  <div style="max-width:48rem; margin:0 auto; padding:4rem 1.5rem;">
+
+    <p style="font-family:'Fira Code',monospace; font-size:0.8rem; color:#8892b0; margin-bottom:2rem;">
+      <a href="blog.html" style="color:#64ffda; text-decoration:none;">Blog</a> / Cypress E2E
+    </p>
+
+    <span style="color:#64ffda; font-size:0.75rem; font-family:'Fira Code',monospace;">QA Automatisation</span>
+    <h1 style="font-size:2rem; font-weight:700; color:#ccd6f6; margin:0.5rem 0 1rem; line-height:1.2;">Introduction à Cypress pour les tests E2E</h1>
+
+    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:2rem; flex-wrap:wrap;">
+      <span style="font-size:0.8rem; color:#8892b0; font-family:'Fira Code',monospace;">15 novembre 2024</span>
+      <span style="color:#8892b0;">·</span>
+      <span style="font-size:0.8rem; color:#8892b0; font-family:'Fira Code',monospace;">8 min de lecture</span>
+    </div>
+
+    <img src="files/images_blog/introduction-cypress.png" alt="Cypress Tests E2E" style="width:100%; border-radius:0.75rem; margin-bottom:3rem; border:1px solid rgba(100,255,218,0.1);">
+
+    <div class="blog-content">
+
+      <p>Cypress est devenu l'un des outils de test end-to-end les plus populaires dans l'écosystème JavaScript. Dans cet article, je vous guide pas à pas pour mettre en place vos premiers tests E2E.</p>
+
+      <h2>Pourquoi Cypress ?</h2>
+      <p>Contrairement à Selenium, Cypress s'exécute directement dans le navigateur, ce qui lui confère plusieurs avantages décisifs :</p>
+      <ul>
+        <li><strong>Vitesse</strong> : les tests s'exécutent sans délais artificiels, Cypress attend automatiquement que les éléments soient disponibles</li>
+        <li><strong>Debugging</strong> : le Time Travel permet de voir exactement ce qui s'est passé à chaque étape du test</li>
+        <li><strong>Fiabilité</strong> : moins de tests flaky grâce à la gestion automatique des assertions asynchrones</li>
+        <li><strong>Developer Experience</strong> : rechargement à chaud, console interactive, screenshots et vidéos automatiques</li>
+      </ul>
+
+      <h2>Installation</h2>
+      <p>Cypress s'installe facilement via npm dans votre projet existant :</p>
+      <pre><code># Installation
+npm install cypress --save-dev
+
+# Ouverture de l'interface Cypress
+npx cypress open
+
+# Ou exécution en mode headless (CI)
+npx cypress run</code></pre>
+
+      <p>Lors de la première ouverture, Cypress crée automatiquement la structure de dossiers :</p>
+      <pre><code>cypress/
+├── e2e/          ← vos fichiers de test (specs)
+├── fixtures/     ← données de test (JSON)
+├── support/
+│   ├── commands.js    ← commandes custom
+│   └── e2e.js         ← configuration globale
+cypress.config.js      ← configuration principale</code></pre>
+
+      <h2>Votre premier test</h2>
+      <p>Créez le fichier <code>cypress/e2e/login.cy.js</code> :</p>
+      <pre><code>describe('Page de connexion', () => {
+  beforeEach(() => {
+    cy.visit('/login')
+  })
+
+  it('doit permettre de se connecter avec des identifiants valides', () => {
+    // Saisie des champs
+    cy.get('[data-cy="email"]').type('user@example.com')
+    cy.get('[data-cy="password"]').type('motdepasse123')
+
+    // Soumission du formulaire
+    cy.get('[data-cy="submit-btn"]').click()
+
+    // Vérification de la redirection
+    cy.url().should('include', '/dashboard')
+    cy.contains('Bienvenue').should('be.visible')
+  })
+
+  it('doit afficher une erreur avec de mauvais identifiants', () => {
+    cy.get('[data-cy="email"]').type('faux@example.com')
+    cy.get('[data-cy="password"]').type('mauvais')
+    cy.get('[data-cy="submit-btn"]').click()
+
+    cy.get('[data-cy="error-message"]')
+      .should('be.visible')
+      .and('contain', 'Identifiants incorrects')
+  })
+})</code></pre>
+
+      <blockquote>
+        💡 Conseil : utilisez les attributs <code>data-cy</code> sur vos éléments HTML plutôt que des classes CSS ou des IDs. Ils résistent aux refactorisations et rendent vos sélecteurs explicitement destinés aux tests.
+      </blockquote>
+
+      <h2>Commandes custom</h2>
+      <p>Pour éviter la répétition (DRY), créez des commandes réutilisables dans <code>cypress/support/commands.js</code> :</p>
+      <pre><code>// Commande de connexion réutilisable
+Cypress.Commands.add('login', (email, password) => {
+  cy.request({
+    method: 'POST',
+    url: '/api/auth/login',
+    body: { email, password }
+  }).then(({ body }) => {
+    window.localStorage.setItem('token', body.token)
+  })
+})
+
+// Utilisation dans un test
+describe('Dashboard', () => {
+  beforeEach(() => {
+    cy.login('admin@example.com', 'password')
+    cy.visit('/dashboard')
+  })
+  // ...
+})</code></pre>
+
+      <h2>Intégration dans GitHub Actions</h2>
+      <p>Ajoutez ce workflow dans <code>.github/workflows/e2e.yml</code> :</p>
+      <pre><code>name: Tests E2E
+on: [push, pull_request]
+
+jobs:
+  cypress:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cypress-io/github-action@v6
+        with:
+          build: npm run build
+          start: npm start
+          wait-on: 'http://localhost:3000'
+          record: true
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}</code></pre>
+
+      <h2>Conclusion</h2>
+      <p>Cypress simplifie considérablement la mise en place et la maintenance de tests E2E. Sa courbe d'apprentissage rapide et son écosystème riche en font un choix idéal pour les équipes QA modernes.</p>
+      <p>Dans le prochain article, nous verrons comment implémenter le pattern Page Object Model pour maintenir des suites de tests de grande taille.</p>
+
+    </div>
+
+    <!-- Tags -->
+    <div style="margin-top:2.5rem; padding-top:1.5rem; border-top:1px solid rgba(31,41,55,0.8);">
+      <p style="color:#8892b0; font-size:0.8rem; font-family:'Fira Code',monospace; margin-bottom:0.75rem;">// tags</p>
+      <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
+        <span class="tech-badge">Cypress</span><span class="tech-badge">E2E</span><span class="tech-badge">JavaScript</span>
+        <span class="tech-badge">GitHub Actions</span><span class="tech-badge">QA</span>
+      </div>
+    </div>
+
+    <div style="margin-top:2.5rem; display:flex; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
+      <a href="blog.html" class="btn-outline" style="padding:0.5rem 1rem; font-size:0.875rem;">← Retour au blog</a>
+      <a href="blog-post-2.html" class="btn-outline" style="padding:0.5rem 1rem; font-size:0.875rem;">Article suivant →</a>
+    </div>
+  </div>
+</main>
+<div id="footer-placeholder"></div>
+<script src="js/script.js"></script>
+</body>
+</html>
