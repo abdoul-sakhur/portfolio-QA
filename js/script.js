@@ -61,7 +61,7 @@ const FOOTER_HTML = `
     <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:2rem; margin-bottom:2.5rem;">
       <div>
         <a href="index.html" style="font-family:'Fira Code',monospace; font-weight:700; font-size:1.125rem; color:#64ffda; text-decoration:none;">&lt;Abdoul Sarba /&gt;</a>
-        <p style="color:#8892b0; font-size:0.875rem; margin-top:0.5rem;">Testeur QA / DevOps Engineer</p>
+        <p style="color:#8892b0; font-size:0.875rem; margin-top:0.5rem;">Testeur QA / Automaticien</p>
         <span style="display:inline-flex; align-items:center; gap:0.375rem; color:#4ade80; font-family:'Fira Code',monospace; font-size:0.75rem; margin-top:0.75rem;">
           <span class="animate-pulse" style="width:6px; height:6px; border-radius:50%; background:#4ade80; display:inline-block;"></span>
           Disponible pour une mission
